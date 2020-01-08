@@ -673,7 +673,7 @@ def barbarik():
             tj = math.ceil(math.pow(2, j)*(2*epsilon+eta)/((eta-2*epsilon)**2)*math.log(4.0/(eta+2*epsilon), 2)*(4*math.e/(math.e-1)*math.log(1.0/delta)))
             beta = (math.pow(2, j-1)+1)*(eta + 2*epsilon)*1.0/(4+(2*epsilon+eta)*(math.pow(2, j-1) - 1))
             gamma = (beta-2*epsilon)/4
-            constantFactor = math.ceil(1/(9*gamma*gamma))
+            constantFactor = math.ceil(1/(8.79*gamma*gamma))
             boundFactor = math.log((16)*(math.e/(math.e-1))*(1/((eta-2*epsilon)**2))*math.log(4/(eta+2*epsilon), 2)*math.log(1/delta), 2)
             print("constantFactor:{:<4} boundFactor: {:<20} logBoundFactor: {:<20}".format(
                 constantFactor, boundFactor, math.log(boundFactor, 2)))
