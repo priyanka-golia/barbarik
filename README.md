@@ -1,45 +1,113 @@
-# Barbarik, a testing framework for (almost) uniform samplers
 
-Barbarik is a framework developed to test whether a sampler is almost uniform or not. It uses SPUR as the underlying uniform sampler. This work is by Sourav Chakraborty and Kuldeep S. Meel, as published in [AAAI'19](https://www.comp.nus.edu.sg/~meel/Papers/aaai19-cm.pdf).
+# Supplementary Material for the paper On Testing of Samplers(Paper ID:5110)
+
+  
+
+Barbarik2 is a framework developed to test whether a sampler is epsilon-close or eta-far from a given distribution with confidence greater than 1-delta.
+
+  
+
+The full paper has five Appendices(A-E).
+
+  
+
+Appendices A-D contain the theoretical justification for the theorems and lemmas mentioned in the paper.
+
+Appendix E has the results for the entire set of benchmarks and all the tested samplers.
+
+The results presented in the extended tables of Appendix E can be verified with the code and benchmarks presented in this folder.
+
+  
+
+## Requirements to run the code
+
+  
+
+* Python 2.7
+
+  
+
+To install the required libraries, run:
+
+  
+
+```
+
+pip install -r requirements.txt
+
+```
+
+  
 
 ## Getting Started
 
-Run:
-```
-git clone --depth 1 https://github.com/meelgroup/barbarik.git
-cp my_favourite_cnf.cnf.gz barbarik/
-cd barbarik
-./barbarik.py --seed 1 --sampler SAMPLER_TYPE blasted_case110.cnf out
+  
+
+To run with the parameter values used in the paper:
+
+  
+
 ```
 
-Where  SAMPLER_TYPE takes the following values:
+cp benchmarks/s349_3_2.cnf code/
+
+cd code
+
+python barbarik2.py --eta 1.6 --epsilon 0.1 --delta 0.2 --sampler 2 --seed 42 s349_3_2.cnf
+
+```
+
+  
+  
+
+For the command-
+
+  
+
+```
+
+python barbarik2.py --eta ETA --epsilon EPSILON --delta DELTA --sampler SAMPLER-TYPE --seed SEED mycnf.cnf
+
+```
+
+  
+
+ETA takes values in (0,2),
+
+EPSILON takes values in (0,0.33),
+
+DELTA takes values in (0,0.5),
+
+SEED takes integer values, and
+
+  
+
+SAMPLER-TYPE takes the following values:
+
+  
+
 * UniGen2 = 1
+
 * QuickSampler = 2
+
 * STS = 3
-* CustomSampler = 4
-* AppMC3 = 5
+
+  
+
+Note that only UniGen2 shows identical behavior with a fixed seed.
+
+  
 
 ### Samplers used
 
+  
+
 In the "samplers" directory, you will find 64-bit x86 Linux compiled binaries for:
-* [ApproxMC3-with-sampling](https://github.com/meelgroup/ApproxMC/tree/master-with-sampling) - an almost-uniform sampler (This is a beta version of UniGen3 -- which will be released soon. If you use ApproxMC3 binary, please cite UniGen paper to avoid any confusion.)
-* [UniGen2](https://bitbucket.org/kuldeepmeel/unigen/) - an almost-uniform sampler, version 2
-* [SPUR](https://github.com/ZaydH/spur) - Perfectly Uniform Satisfying Assignments
-* [Quick Sampler](https://github.com/RafaelTupynamba/quicksampler)
-* [STS](http://cs.stanford.edu/~ermon/code/STS.zip)
 
-### Custom Samplers
+  
 
-To run a custom sampler, make appropriate changes to the code -- look for the following tag in `barbarik.py` file: `# @CHANGE_HERE : please make changes in the below block of code`
+* UniGen2- an almost-uniform sampler, version 2
 
-## How to Cite
+* Quick Sampler
 
-If you use Barbarik, please cite the following paper : [AAAI'19](https://www.comp.nus.edu.sg/~meel/Papers/aaai19-cm.pdf). Here is [BIB file](https://www.comp.nus.edu.sg/~meel/bib/CM19.bib)
-
-## Contributors
-1. Kuldeep S. Meel
-2. Sourav Chakraborty
-3. Shayak Chakraborty 
-4. Yash Pote
-5. Mate Soos
-5. Priyanka Golia
+* STS
