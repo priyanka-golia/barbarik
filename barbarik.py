@@ -33,6 +33,7 @@ SAMPLER_STS = 3
 SAMPLER_CMS = 4
 SAMPLER_APPMC3 = 5
 SAMPLER_SPUR = 6
+SAMPLER_KUS = 7
 
 def get_sampler_string(samplerType):
     if samplerType == SAMPLER_UNIGEN:
@@ -47,6 +48,8 @@ def get_sampler_string(samplerType):
         return 'CustomSampler'
     if samplerType == SAMPLER_SPUR:
         return 'SPUR'
+    if samplerType == SAMPLER_KUS:
+        return 'KUS'
     print("ERROR: unknown sampler type")
     exit(-1)
 
@@ -133,6 +136,9 @@ class SolutionRetriver:
 
         elif (samplerType == SAMPLER_SPUR):
             sols = SolutionRetriver.getSolutionFromSpur(*topass_withseed)
+
+        elif (samplerType == SAMPLER_KUS):
+            sols = SolutionRetriver.getSolutionFromKus(*topass_withseed)
 
         else:
             print("Error: No such sampler!")
@@ -300,6 +306,37 @@ class SolutionRetriver:
         os.unlink(tempOutputFile)
         return solList
 
+    @staticmethod
+    def getSolutionFromKus(inputFile, numSolutions, indVarList, newSeed):
+        inputFileSuffix = inputFile.split('/')[-1][:-4]
+        tempOutputFile = tempfile.gettempdir()+'/'+inputFileSuffix+".txt"
+        cwd = os.getcwd()
+        cmd = 'python3  KUS.py --samples='+str(numSolutions) + ' ' + '--outputfile ' +  tempOutputFile
+        cmd += ' ' + str(os.path.abspath(inputFile))+' > /dev/null 2>&1'
+        if args.verbose:
+            print("cmd: ", cmd)
+        os.chdir(str(os.getcwd())+'/samplers')
+        os.system(cmd)
+        os.chdir(str(cwd))
+
+        with open(tempOutputFile, 'r') as f:
+            lines = f.readlines()
+        solList = []
+        for line in lines:
+            sol = ''
+            count = line.split(",")[0]
+            if (int(count) == numSolutions+1):
+                break
+            lits = line.split(",")[1].strip("\n").strip(" ").split(" ")
+            for y in indVarList:
+                if str(y) in lits:
+                    sol += ' ' + str(y)
+
+                if "-" + str(y) in lits:
+                    sol += ' -' + str(y)
+            solList.append(sol)
+        os.unlink(str(tempOutputFile))
+        return solList
     @staticmethod
     def getSolutionFromSTS(inputFile, numSolutions, indVarList, newSeed):
         kValue = 50
@@ -755,13 +792,12 @@ class Experiment:
 
 
 if __name__ == "__main__":
-
-    samplers =
-        str(SAMPLER_UNIGEN) + " for UniGen\n" +
-        str(SAMPLER_QUICKSAMPLER) + " for QuickSampler\n"+
-        str(SAMPLER_STS)+ " for STS\n"+
-        str(SAMPLER_SPUR) + " for SPUR\n" +
-        str(SAMPLER_CMS) + " for CMS\n"
+    samplers =  str(SAMPLER_UNIGEN) + " for UniGen\n"
+    samplers += str(SAMPLER_QUICKSAMPLER) + " for QuickSampler\n"
+    samplers += str(SAMPLER_STS) + " for STS\n"
+    samplers += str(SAMPLER_SPUR) +" for SPUR\n"
+    samplers += str(SAMPLER_CMS) + " for CMS\n"
+    samplers += str(SAMPLER_KUS) + " for KUS\n"
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--sampler', type=int, help=samplers, default=SAMPLER_STS, dest='sampler')
@@ -835,10 +871,12 @@ if __name__ == "__main__":
                 ok, breakExperiment = exp.one_experiment(experiment, j, i, numExperiments, tj)
 
                 if ok is None:
+                    print("ok None")
                     continue
 
                 if not ok:
                     i -= 1
+                    print("not ok")
                     continue
 
                 if breakExperiment:
